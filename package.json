@@ -1,5 +1,5 @@
 {
-  "name": "github-ranking-remix",
+  "name": "ranking-app",
   "private": true,
   "sideEffects": false,
   "type": "module",
