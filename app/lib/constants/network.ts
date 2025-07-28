@@ -1,0 +1,5 @@
+export const NETWORK_SIMULATION = {
+  MIN_DELAY_MS: 100,
+  MAX_DELAY_MS: 500,
+  MAX_REQUESTS: 1000,
+} as const;

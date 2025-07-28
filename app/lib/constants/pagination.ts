@@ -1,0 +1,9 @@
+export const PAGINATION_LIMITS = {
+  MIN_PAGE: 1,
+  MIN_PER_PAGE: 1,
+  MAX_PER_PAGE: 100,
+  DEFAULT_PER_PAGE: 30,
+  DEFAULT_PAGE_SIZE_OPTIONS: [10, 30, 50, 100],
+} as const;
+
+export const ITEMS_PER_PAGE = 12;
