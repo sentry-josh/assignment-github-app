@@ -195,3 +195,25 @@ This codebase demonstrates:
 - **Error Handling**: User-friendly error messages
 - **Performance**: Optimized algorithms and React rendering patterns
 - **Testability**: Modular design with comprehensive unit but due to time constraints from me i reduced some of this
+
+### Testing Recommendations
+
+**For Basic Testing:**
+
+- Start with `kentcdodds` at depth 1-2
+- Try `wesbos` for moderate network size
+
+**For Pagination Testing:**
+
+- Use `torvalds` or `gaearon` at depth 2+
+- These will generate 20+ results to test scroll loading
+
+**For Sorting Testing:**
+
+- Use any user above and test all sort options
+- Compare results between different depth levels
+
+**For Performance Testing:**
+
+- Try `torvalds` at depth 3 (largest network)
+- Test sorting and pagination with large datasets
