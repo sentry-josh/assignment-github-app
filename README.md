@@ -1,6 +1,6 @@
 # Assignment Github App
 
-A web application that creates ranking reports for GitHub users based on their follower networks, with configurable depth traversal and comprehensive analytics.
+A web application that creates ranking reports for GitHub users based on their follower networks, with configurable depth traversal.
 
 ## 🎯 Problem Statement
 
@@ -36,13 +36,11 @@ This solution prioritizes **scalability**, **maintainability**, and **separation
 - **Service Layer**: GitHub API integration with mock data fallback
 - **Data Layer**: Efficient follower graph traversal algorithms
 - **UI Layer**: React components with clean separation
-- **State Management**: Centralized state with proper data flow
 
 #### ⚡ **Performance Optimizations**
 
 - Memoized API calls to prevent duplicate requests
 - Virtual scrolling for large datasets
-- Debounced search and filtering
 - Efficient graph traversal with cycle detection
 
 ### Core Features
@@ -66,13 +64,6 @@ This solution prioritizes **scalability**, **maintainability**, and **separation
 - Client-side pagination with configurable page sizes
 - Lazy loading for smooth user experience
 - Progress indicators for long-running operations
-
-#### 🛠️ **Developer Experience**
-
-- Comprehensive error handling and user feedback
-- Loading states and skeleton screens
-- Responsive design for all device sizes
-- Dark/light theme support
 
 ### Technical Implementation
 
@@ -201,16 +192,6 @@ This codebase demonstrates:
 
 - **Clean Architecture**: Clear separation between UI, business logic, and data layers
 - **Type Safety**: Full TypeScript integration with comprehensive type definitions
-- **Error Handling**: Graceful degradation with user-friendly error messages
+- **Error Handling**: User-friendly error messages
 - **Performance**: Optimized algorithms and React rendering patterns
-- **Testability**: Modular design with comprehensive unit
-- **Accessibility**: WCAG-compliant UI with proper ARIA labels and keyboard navigation
-
-## 🔮 Other Things I considered
-
-- **Real-time Updates**: WebSocket integration for live follower tracking
-- **Advanced Analytics**: Follower growth trends and network analysis
-- **Export Functionality**: CSV/JSON export of ranking reports
-- **User Authentication**: GitHub OAuth for accessing private follower data
-- **Caching Layer**: Redis integration for improved performance
-- **GraphQL Integration**: More efficient data fetching with GitHub's GraphQL API
+- **Testability**: Modular design with comprehensive unit but due to time constraints from me i reduced some of this
