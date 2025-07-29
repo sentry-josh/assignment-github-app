@@ -190,11 +190,10 @@ npm run test
 
 This codebase demonstrates:
 
-- **Clean Architecture**: Clear separation between UI, business logic, and data layers
 - **Type Safety**: Full TypeScript integration with comprehensive type definitions
 - **Error Handling**: User-friendly error messages
 - **Performance**: Optimized algorithms and React rendering patterns
-- **Testability**: Modular design with comprehensive unit but due to time constraints from me i reduced some of this
+- **Testability**: Modular design with comprehensive unit but due to time constraints from me i reduced some of this, I have tried to cover most important scenarios as much as possible.
 
 ### Testing Recommendations
 

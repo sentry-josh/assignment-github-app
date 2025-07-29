@@ -1,14 +1,13 @@
 import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
-import React from "react";
 import { cn } from "../../lib/utils";
 import { SortField, SortOptions } from "../../lib";
 
-interface SortButtonProps {
+type SortButtonProps = {
   field: SortField;
   label: string;
   currentSort: SortOptions;
   onSort: (field: SortField) => void;
-}
+};
 
 export const SortButton = (props: SortButtonProps) => {
   const { field, label, currentSort, onSort } = props;
@@ -17,6 +16,7 @@ export const SortButton = (props: SortButtonProps) => {
 
   return (
     <button
+      data-testid={`sort-button-${field}`}
       onClick={() => onSort(field)}
       className={cn(
         "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg",

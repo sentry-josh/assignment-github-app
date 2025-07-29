@@ -17,11 +17,13 @@
     "paths": {
       "~/*": ["./app/*"]
     },
-    "types": ["vitest/globals", "node"]
+    "types": ["vitest/globals", "node"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
+    "app/**/*.ts",     
+    "app/**/*.tsx",
     "tests/**/*.ts",
     "vitest.config.ts",
     "vite.config.ts"

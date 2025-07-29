@@ -10,3 +10,5 @@ export const GITHUB_LIMITS = {
 export const GITHUB_PATTERNS = {
   USERNAME: /^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/,
 } as const;
+
+export const GITHUB_BASE_URL = "https://github.com";

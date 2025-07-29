@@ -3,7 +3,7 @@ import { MetaFunction } from "@remix-run/react";
 import { PageHeader } from "../components/github-analyzer/PageHeader";
 import { AnalysisForm } from "../components/github-analyzer/AnalysisForm";
 import { StickyHeader } from "../components/github-analyzer/StickyHeader";
-import { ResultsGrid } from "../components/github-analyzer/ResultGrid";
+import { ResultGrid } from "../components/github-analyzer/ResultGrid";
 import { useGitHubAnalysis } from "../hooks/useGitHubAnalysis";
 import { useScrollToElement } from "../hooks/useScrollToElement";
 
@@ -81,7 +81,7 @@ export default function Index() {
               onSearch={scrollToForm}
             />
 
-            <ResultsGrid
+            <ResultGrid
               users={displayedUsers}
               sortConfig={sortConfig}
               onSort={updateSort}

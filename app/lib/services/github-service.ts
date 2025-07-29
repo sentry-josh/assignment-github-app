@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { GITHUB_LIMITS, NETWORK_SIMULATION } from "../constants";
 import { GitHubDataAccess } from "../mocks";
 import {
@@ -5,15 +6,12 @@ import {
   GitHubUser,
   SortOptions,
   UserDetails,
+  GitHubUsernameSchema,
+  GitHubUserSchema,
+  DepthSchema,
+  PaginationParamsSchema,
 } from "../types";
-import {
-  ResponseBuilder,
-  NetworkSimulator,
-  UserNotFoundError,
-  InvalidUsernameError,
-  InvalidDepthError,
-  InvalidPaginationError,
-} from "../util";
+import { ResponseBuilder, NetworkSimulator, UserNotFoundError } from "../util";
 
 export interface GitHubServiceOptions {
   readonly minDelay?: number;
@@ -22,15 +20,12 @@ export interface GitHubServiceOptions {
 }
 
 export interface GitHubRepository {
-  getUser(username: string): Promise<GitHubAPIResponse<GitHubUser>>;
-  getFollowers(
-    username: string,
-    page?: number,
-    perPage?: number,
-  ): Promise<GitHubAPIResponse<GitHubUser[]>>;
   getFollowersWithRank(
     username: string,
     depth: number,
+    sortOptions?: SortOptions,
+    page?: number,
+    perPage?: number,
   ): Promise<GitHubAPIResponse<UserDetails[]>>;
 }
 
@@ -47,29 +42,48 @@ export class GitHubService implements GitHubRepository {
     this.dataAccess = dataAccess ?? new GitHubDataAccess();
   }
 
-  private validateUsername(username: string): void {
-    if (!username?.trim()) {
-      throw new InvalidUsernameError(username);
+  async getFollowersWithRank(
+    username: string,
+    depth: number,
+    sortOptions?: SortOptions,
+    page = 1,
+    perPage = 12,
+  ): Promise<GitHubAPIResponse<UserDetails[]>> {
+    this.validateInputs(username, depth, page, perPage);
+
+    await NetworkSimulator.delay(this.config.minDelay, this.config.maxDelay);
+
+    const rootUser = this.dataAccess.findUser(username);
+    if (!rootUser) {
+      throw new UserNotFoundError(username);
     }
+
+    const allUsers = this.collectAllUsers(username, depth);
+    const sortedUsers = this.calculateRanksForUsers(
+      allUsers,
+      depth,
+      sortOptions,
+    );
+
+    return this.paginateResults(sortedUsers, page, perPage);
   }
 
-  private validateDepth(depth: number): void {
-    if (!Number.isInteger(depth) || depth < 0) {
-      throw new InvalidDepthError(depth, this.config.maxDepth);
-    }
-
-    if (depth > this.config.maxDepth) {
-      throw new InvalidDepthError(depth, this.config.maxDepth);
-    }
-  }
-
-  private validatePagination(page: number, perPage: number): void {
-    if (
-      page < 1 ||
-      perPage < 1 ||
-      perPage > GITHUB_LIMITS.MAX_FOLLOWERS_PER_REQUEST
-    ) {
-      throw new InvalidPaginationError(page, perPage);
+  private validateInputs(
+    username: string,
+    depth: number,
+    page: number,
+    perPage: number,
+  ): void {
+    try {
+      GitHubUsernameSchema.parse(username);
+      DepthSchema.parse(depth);
+      PaginationParamsSchema.parse({ page, perPage });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const firstIssue = error.issues[0];
+        throw new Error(`Validation error: ${firstIssue.message}`);
+      }
+      throw error;
     }
   }
 
@@ -93,66 +107,6 @@ export class GitHubService implements GitHubRepository {
     return rank;
   }
 
-  async getUser(username: string): Promise<GitHubAPIResponse<GitHubUser>> {
-    this.validateUsername(username);
-    await NetworkSimulator.delay(this.config.minDelay, this.config.maxDelay);
-
-    const user = this.dataAccess.findUser(username);
-    if (!user) {
-      throw new UserNotFoundError(username);
-    }
-
-    return ResponseBuilder.success(user);
-  }
-
-  async getFollowers(
-    username: string,
-    page = 1,
-    perPage = 30,
-  ): Promise<GitHubAPIResponse<GitHubUser[]>> {
-    this.validateUsername(username);
-    this.validatePagination(page, perPage);
-    await NetworkSimulator.delay(this.config.minDelay, this.config.maxDelay);
-
-    const followerUsernames = this.dataAccess.getFollowerUsernames(username);
-    const startIndex = (page - 1) * perPage;
-    const endIndex = startIndex + perPage;
-    const paginatedUsernames = followerUsernames.slice(startIndex, endIndex);
-
-    const followers = paginatedUsernames
-      .map((name) => this.dataAccess.findUser(name))
-      .filter((user): user is GitHubUser => user !== null);
-
-    return ResponseBuilder.success(followers);
-  }
-
-  async getFollowersWithRank(
-    username: string,
-    depth: number,
-    sortOptions?: SortOptions,
-    page = 1,
-    perPage = 12,
-  ): Promise<GitHubAPIResponse<UserDetails[]>> {
-    this.validateUsername(username);
-    this.validateDepth(depth);
-    this.validatePagination(page, perPage);
-    await NetworkSimulator.delay(this.config.minDelay, this.config.maxDelay);
-
-    const rootUser = this.dataAccess.findUser(username);
-    if (!rootUser) {
-      throw new UserNotFoundError(username);
-    }
-
-    const allUsers = this.collectAllUsers(username, depth);
-    const sortedUsers = this.calculateRanksForUsers(
-      allUsers,
-      depth,
-      sortOptions,
-    );
-
-    return this.paginateResults(sortedUsers, page, perPage);
-  }
-
   private collectAllUsers(
     username: string,
     maxDepth: number,
@@ -169,7 +123,14 @@ export class GitHubService implements GitHubRepository {
       const user = this.dataAccess.findUser(currentUsername);
       if (!user) return;
 
-      allUsers.set(currentUsername.toLowerCase(), user);
+      // Validate user data with Zod (showcases runtime type safety)
+      try {
+        const validatedUser = GitHubUserSchema.parse(user);
+        allUsers.set(currentUsername.toLowerCase(), validatedUser);
+      } catch (error) {
+        console.warn(`Invalid user data for ${currentUsername}:`, error);
+        return;
+      }
 
       if (currentDepth > 0) {
         const followerUsernames =
@@ -191,7 +152,14 @@ export class GitHubService implements GitHubRepository {
 
     for (const [username, user] of users) {
       const followersRank = this.calculateFollowersRank(username, depth);
-      usersWithRanks.push({ ...user, followersRank });
+
+      // Validate the final UserDetails object
+      const userDetails = UserDetails.parse({
+        ...user,
+        followersRank,
+      });
+
+      usersWithRanks.push(userDetails);
     }
 
     return this.sortUsers(usersWithRanks, sortOptions);
