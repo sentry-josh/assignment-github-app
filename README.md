@@ -39,7 +39,6 @@ This solution prioritizes **scalability**, **maintainability**, and **separation
 
 #### ⚡ **Performance Optimizations**
 
-- Memoized API calls to prevent duplicate requests
 - Virtual scrolling for large datasets
 - Efficient graph traversal with cycle detection
 
@@ -216,3 +215,8 @@ This codebase demonstrates:
 
 - Try `torvalds` at depth 3 (largest network)
 - Test sorting and pagination with large datasets
+
+### Testing Recommendations
+
+- **Deplopyment Link**: https://spectacular-peony-540cd9.netlify.app/
+- **Important Note**: In other to simplify the deployment we disable the SSR for the project so we can deploy as static files

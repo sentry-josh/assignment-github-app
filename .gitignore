@@ -49,3 +49,5 @@ coverage/
 # Others
 .qodo/
 .DS_Store
+# Local Netlify folder
+.netlify

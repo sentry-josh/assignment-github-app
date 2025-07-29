@@ -17,6 +17,7 @@
   "dependencies": {
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.3",
+    "@remix-run/netlify": "^1.19.3",
     "@remix-run/react": "^2.16.8",
     "@remix-run/serve": "^2.16.8",
     "class-variance-authority": "^0.7.1",

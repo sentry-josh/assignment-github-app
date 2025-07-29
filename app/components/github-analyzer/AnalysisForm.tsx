@@ -61,7 +61,7 @@ export function AnalysisForm({
                 <Github className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   data-testid="username-input"
-                  id="username"
+                  id="git-user-name"
                   type="text"
                   placeholder="e.g. sentry"
                   value={formData.username}
